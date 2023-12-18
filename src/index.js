@@ -1,6 +1,7 @@
 import './style.css';
 
 const API_KEY = '32d21edeb26349c69b3194610231512'; // THIS SHOULDN'T NORMALLY BE DONE, SAVE KEYS IN SECRETS
+const GIPHY_API_KEY = 'eba4nY288dxz7muQy73i5oZwC55BEFH5'; // THIS SHOULDN'T NORMALLY BE DONE, SAVE KEYS IN SECRETS
 const MAX_LENGTH = 40;
 
 const body = document.querySelector('body');
@@ -20,7 +21,12 @@ async function getCurrentWeather(location) {
         );
         if (response.ok) {
             const data = await processJSON(response);
+            const gifResponse = await fetch(
+                `https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${data.current.condition.text}`
+            );
+            const gifObj = await gifResponse.json();
             displayResult(data);
+            displayGIF(gifObj.data.images.original.url);
         }
     } catch (error) {
         console.log(error);
@@ -128,6 +134,13 @@ function displayResult(resultData) {
     } else {
         body.className = 'night';
     }
+}
+
+function displayGIF(url) {
+    const gifImg = document.createElement('img');
+    gifImg.className = 'gif';
+    gifImg.src = url;
+    divResult.appendChild(gifImg);
 }
 
 form.addEventListener('submit', (e) => {

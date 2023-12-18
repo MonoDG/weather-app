@@ -12,6 +12,11 @@ form, div {
   width: 100%;
 }
 
+img.gif {
+  display: flex;
+  max-height: 40vh;
+}
+
 p {
   margin-top: 0;
   margin-bottom: 5px;
