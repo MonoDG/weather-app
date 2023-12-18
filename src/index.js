@@ -84,6 +84,8 @@ async function processJSON(response) {
 
 function displayResult(resultData) {
     const divResult = document.querySelector('.results');
+    divResult.replaceChildren();
+
     const header = document.createElement('h2');
     const pLocalTime = document.createElement('p');
     const pCondition = document.createElement('p');
