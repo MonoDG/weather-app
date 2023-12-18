@@ -51,7 +51,10 @@ async function processJSON(response) {
             is_day: data.current.is_day,
             condition: {
                 text: data.current.condition.text,
-                icon: data.current.condition.icon,
+                icon: `https://${data.current.condition.icon.replace(
+                    '//',
+                    ''
+                )}`,
             },
             feelslike_c: data.current.feelslike_c,
             feelslike_f: data.current.feelslike_f,
@@ -88,16 +91,32 @@ function displayResult(resultData) {
 
     const header = document.createElement('h2');
     const pLocalTime = document.createElement('p');
+    const conditionTitle = document.createElement('h2');
     const pCondition = document.createElement('p');
+    const conditionText = document.createElement('span');
+    const pConditionIcon = document.createElement('img');
     const pTempC = document.createElement('p');
     const pTempF = document.createElement('p');
     const pLastUpdated = document.createElement('p');
 
     header.textContent = `${resultData.location.name}, ${resultData.location.region}, ${resultData.location.country}`;
     pLocalTime.textContent = `Local time: ${resultData.location.localtime}`;
+    conditionTitle.textContent = 'Current condition';
+    conditionText.textContent = resultData.current.condition.text;
+    pConditionIcon.src = resultData.current.condition.icon;
+    pConditionIcon.alt = 'Current weather icon';
+    pCondition.appendChild(conditionText);
+    pTempC.textContent = `Temp. (celsius): ${resultData.current.temp_c} C`;
+    pTempF.textContent = `Temp. (fahrenheit): ${resultData.current.temp_f} F`;
+    pLastUpdated.textContent = `Last updated: ${resultData.current.last_updated}`;
 
     divResult.appendChild(header);
     divResult.appendChild(pLocalTime);
+    divResult.appendChild(pCondition);
+    divResult.appendChild(pConditionIcon);
+    divResult.appendChild(pTempC);
+    divResult.appendChild(pTempF);
+    divResult.appendChild(pLastUpdated);
 
     if (resultData.current.is_day) {
         body.className = 'day';
