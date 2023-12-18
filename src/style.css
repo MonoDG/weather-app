@@ -2,13 +2,13 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   background-color: steelblue;
 }
 
 p {
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 5px;
 }
 
 input[type="text"] {
@@ -33,4 +33,14 @@ input:focus {
 .flex {
   display: flex;
   gap: 10px;
+}
+
+.day {
+  background-image: linear-gradient(steelblue, antiquewhite);
+  color: rgba(0 0 0 / 0.7);
+}
+
+.night {
+  background-image: linear-gradient(rgba(0 0 0 / .5), rgba(0 0 0 / .8));
+  color: rgba(255 255 255 / 0.7);
 }

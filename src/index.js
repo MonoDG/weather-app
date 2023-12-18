@@ -3,6 +3,7 @@ import './style.css';
 const API_KEY = '32d21edeb26349c69b3194610231512'; // THIS SHOULDN'T NORMALLY BE DONE, SAVE KEYS IN SECRETS
 const MAX_LENGTH = 40;
 
+const body = document.querySelector('body');
 const form = document.querySelector('form');
 const locationInput = document.getElementById('location');
 const errorSpan = document.getElementById('error');
@@ -13,8 +14,11 @@ async function getCurrentWeather(location) {
         const response = await fetch(
             `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${location}&aqi=no`
         );
-        const data = await processJSON(response);
-        console.log(data);
+        if (response.ok) {
+            const data = await processJSON(response);
+            console.log(data);
+            displayResult(data);
+        }
     } catch (error) {
         console.log(error);
     }
@@ -78,6 +82,28 @@ async function processJSON(response) {
     return processedData;
 }
 
+function displayResult(resultData) {
+    const divResult = document.querySelector('.results');
+    const header = document.createElement('h2');
+    const pLocalTime = document.createElement('p');
+    const pCondition = document.createElement('p');
+    const pTempC = document.createElement('p');
+    const pTempF = document.createElement('p');
+    const pLastUpdated = document.createElement('p');
+
+    header.textContent = `${resultData.location.name}, ${resultData.location.region}, ${resultData.location.country}`;
+    pLocalTime.textContent = `Local time: ${resultData.location.localtime}`;
+
+    divResult.appendChild(header);
+    divResult.appendChild(pLocalTime);
+
+    if (resultData.current.is_day) {
+        body.className = 'day';
+    } else {
+        body.className = 'night';
+    }
+}
+
 form.addEventListener('submit', (e) => {
     if (locationInput.validity.valueMissing) {
         errorSpan.textContent = 'Location is required';
@@ -107,6 +133,8 @@ locationInput.addEventListener('input', () => {
     charsLeft.textContent = isNaN(nbCharsLeft)
         ? 'Invalid length'
         : `${nbCharsLeft} char(s) left`;
+    if (!locationInput.validity.valueMissing) {
+        errorSpan.textContent = '';
+        errorSpan.className = 'error';
+    }
 });
-
-Promise.all([getCurrentWeather('montreal'), getForecastWeather('medellin', 2)]);
