@@ -1,6 +1,12 @@
 import './style.css';
 
 const API_KEY = '32d21edeb26349c69b3194610231512'; // THIS SHOULDN'T NORMALLY BE DONE, SAVE KEYS IN SECRETS
+const MAX_LENGTH = 40;
+
+const form = document.querySelector('form');
+const locationInput = document.getElementById('location');
+const errorSpan = document.getElementById('error');
+const charsLeft = document.getElementById('characters-left');
 
 async function getCurrentWeather(location) {
     try {
@@ -20,7 +26,6 @@ async function getForecastWeather(location, days) {
             `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${location}&days=${days}&aqi=no&alerts=no`
         );
         const data = await processJSON(response);
-        console.log(data);
     } catch (error) {
         console.log(error);
     }
@@ -72,5 +77,36 @@ async function processJSON(response) {
     }
     return processedData;
 }
+
+form.addEventListener('submit', (e) => {
+    if (locationInput.validity.valueMissing) {
+        errorSpan.textContent = 'Location is required';
+        errorSpan.className = 'error active';
+    } else if (locationInput.validity.tooLong) {
+        errorSpan.textContent = `Too long, max character limit is ${locationInput.getAttribute(
+            'maxlength'
+        )}`;
+        errorSpan.className = 'error active';
+    } else {
+        errorSpan.textContent = '';
+        errorSpan.className = 'error';
+        getCurrentWeather(locationInput.value);
+    }
+    e.preventDefault();
+});
+
+locationInput.setAttribute('maxlength', MAX_LENGTH);
+charsLeft.textContent = `${locationInput.getAttribute(
+    'maxlength'
+)} char(s) left`;
+
+locationInput.addEventListener('input', () => {
+    let nbCharsLeft =
+        parseInt(locationInput.getAttribute('maxlength')) -
+        locationInput.value.length;
+    charsLeft.textContent = isNaN(nbCharsLeft)
+        ? 'Invalid length'
+        : `${nbCharsLeft} char(s) left`;
+});
 
 Promise.all([getCurrentWeather('montreal'), getForecastWeather('medellin', 2)]);
