@@ -8,19 +8,25 @@ const form = document.querySelector('form');
 const locationInput = document.getElementById('location');
 const errorSpan = document.getElementById('error');
 const charsLeft = document.getElementById('characters-left');
+const divResult = document.querySelector('.results');
+const loader = document.querySelector('.loader');
 
 async function getCurrentWeather(location) {
     try {
+        loader.classList.remove('hidden');
+        divResult.classList.add('hidden');
         const response = await fetch(
             `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${location}&aqi=no`
         );
         if (response.ok) {
             const data = await processJSON(response);
-            console.log(data);
             displayResult(data);
         }
     } catch (error) {
         console.log(error);
+    } finally {
+        loader.classList.add('hidden');
+        divResult.classList.remove('hidden');
     }
 }
 
@@ -86,7 +92,6 @@ async function processJSON(response) {
 }
 
 function displayResult(resultData) {
-    const divResult = document.querySelector('.results');
     divResult.replaceChildren();
 
     const header = document.createElement('h2');
